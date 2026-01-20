@@ -6,16 +6,22 @@ import os
 # random.seed(1337)
 os.system('clear')
 
-n=4
+n=4 # random.randint(1,8)
 
-probab = 0.80
+probab = 0.70
 
 numbers = []
-for i in range(0, 2**n):
+for i in range(2**n):
     if random.random()<probab:
         numbers.append(i)
 
-numbers = [1,4,7,9,15,16,17,20,21,24,25,28,29]
+if len(numbers)==0:
+    numbers.append(random.randint(0, 2**n-1))
+
+numbers = [0, 2, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15]
+# numbers = [1,2,3,5,7]
+
+assert max(numbers)<2**n # you should increase n
 
 numbers_printable = [str(i)+' '*(len(str(2**n-1))-len(str(i))) for i in numbers]
 
@@ -42,15 +48,15 @@ for i in groups:
 groups_prinable = groups_prinable[:-1]
 
 
-
-
+# creating L1
+# we must look for below group since we dont have -
 L1 = []
 for i in range(len(groups)-1):
     for x in groups[i]:
         for y in groups[i+1]:
-            is_one, output = diff(x,y)
-            if is_one:
-                L1.append(output)
+            is_one, differed = diff(x,y)
+            if is_one and (differed not in L1):
+                L1.append(differed)
 
 L1_grouped = []
 index = -1
@@ -66,41 +72,63 @@ L1_grouped_prinable = []
 for i in L1_grouped:
     L1_grouped_prinable = L1_grouped_prinable+i+[' '*n]
 L1_grouped_prinable = L1_grouped_prinable[:-1]
+# end of creating L1
 
-
-
-
-def get_new_layer(L1_grouped):
-    L2 = []
-    for i in range(len(L1_grouped)-1):
-        for x in range(len(L1_grouped[i])):
-            for y in range(x+1, len(L1_grouped[i])):
-                is_one, output = diff(L1_grouped[i][x],L1_grouped[i][y])
-                if is_one and (output not in L2):
-                    L2.append(output)
-
-    L2_grouped = []
-    index = -1
-    changed = -1
-    for i in sorted(L2, key=lambda x:int(x.replace('1', '0').replace('-', '1'), 2)):
-        if not changed==int(i.replace('1', '0').replace('-', '1'), 2):
-            changed = int(i.replace('1', '0').replace('-', '1'), 2)
-            L2_grouped = L2_grouped+[[]]
-            index+=1
-        L2_grouped[index] = L2_grouped[index]+[i]
-
-    L2_grouped_prinable = []
-    for i in L2_grouped:
-        L2_grouped_prinable = L2_grouped_prinable+i+[' '*n]
-    L2_grouped_prinable = L2_grouped_prinable[:-1]
-
-    return [L2, L2_grouped, L2_grouped_prinable]
-
-
+# creating other layers
 layers = [[L1, L1_grouped, L1_grouped_prinable]]
 for i in range(1, n):
-    layers.append(get_new_layer(layers[-1][1]))
+    layers.append(get_new_layer(layers[-1][1], n=n))
+# end of creating other layers
 
+
+# finding primes
+def does_prime_has_it(prime, x):
+    for i in range(len(prime)):
+        if not prime[i]=='-':
+            if not x[i]==prime[i]:
+                return False
+    return True
+
+primes = []
+for i in layers[::-1]+[[numbers_binary]]:
+    for j in i[0]:
+        # print('trying prime:', j)
+        is_new_prime = True
+        for prime in primes:
+            if does_prime_has_it(prime, j):
+                # print('failed')
+                is_new_prime = False
+                break
+        if is_new_prime:
+            # print('passed')
+            primes.append(j)
+
+print('primes:', ', '.join(primes).replace('\'', ''))
+# end of finding primes
+
+
+# testing
+f_numbers = []
+for i in range(2**n):
+    i_bin = (n*'0'+bin(i)[2:])[-n:]
+    included = False
+    for prime in primes:
+        if does_prime_has_it(prime, i_bin):
+            included = True
+            break
+
+    if included:
+        f_numbers.append(i)
+
+if not f_numbers==numbers:
+    print('BAZINGA... bug') # I tested thausands of numbers to make sure, it works...
+    print(numbers)
+    print(f_numbers)
+    exit(1)
+# end of testing
+
+
+# printing
 printed_layers = [numbers_printable, numbers_binary, groups_prinable]
 for i in layers:
     printed_layers.append(i[0])
@@ -116,3 +144,4 @@ for i in range(len(printed_layers)):
         printed_layers[i] = [(header.split(',')[i]+' '*n)[:n]]+[splitter[i]]+printed_layers[i]
 
 print_table(printed_layers, n=n)
+# end of printing
