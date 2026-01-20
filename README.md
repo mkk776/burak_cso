@@ -1,5 +1,5 @@
+```
 does not find primes (Im bored ad this point)
-
 you can set bits length (n=4 for this example)
 
 output look like this:
@@ -31,3 +31,4 @@ output look like this:
 |    |      |      |      | -110 |      |      |      |      |      |      | 
 |    |      |      |      | -111 |      |      |      |      |      |      | 
 \--------------------------------------------------------------------------/
+```
