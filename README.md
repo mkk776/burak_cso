@@ -1,10 +1,9 @@
 ```
-does not find primes (Im bored ad this point)
 you can set bits length (n=4 for this example)
 
-DON'T MESS WITH THE CODE IT'S A HUGE HAIRBALL
-
 output look like this:
+
+primes: -1--, 1-0-, 0--0, 1--1, --00
 /--------------------------------------------------------------------------\
 | N  | bin  |      | L1   |      | L2   |      | L3   |      | L4   |      | 
 |    |      |      |      |      |      |      |      |      |      |      | 
