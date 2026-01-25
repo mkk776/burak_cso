@@ -4,7 +4,7 @@ import os
 
 
 # random.seed(1337)
-os.system('clear')
+# os.system('clear')
 
 n=4 # random.randint(1,8)
 
@@ -18,8 +18,18 @@ for i in range(2**n):
 if len(numbers)==0:
     numbers.append(random.randint(0, 2**n-1))
 
-numbers = [0, 2, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15]
-# numbers = [1,2,3,5,7]
+# numbers = [0,1,2,4,6,8,9]
+numbers = [0,1,2,3,4,6,12,14]
+
+invert_numbers = True
+invert_numbers = False
+numbers2 = []
+for i in range(2**n):
+    if not (i in numbers):
+        numbers2.append(i)
+
+if invert_numbers:
+    numbers = numbers2
 
 assert max(numbers)<2**n # you should increase n
 
@@ -80,51 +90,49 @@ for i in range(1, n):
     layers.append(get_new_layer(layers[-1][1], n=n))
 # end of creating other layers
 
+# IN HERE IT INCLUDES UNNDECESARY PRIMES SO I GUESS WE NEED A TABLE AND IM BORED
+# # finding primes
+# def does_prime_has_it(prime, x):
+#     print('################ ', prime, x)
+#     for i in range(n):
+#         if not prime[i]=='-':
+#             if not x[i]==prime[i]:
+#                 return False
+#     return True
 
-# finding primes
-def does_prime_has_it(prime, x):
-    for i in range(len(prime)):
-        if not prime[i]=='-':
-            if not x[i]==prime[i]:
-                return False
-    return True
+# prime_candidates = []
+# for i in layers[::-1]+[[numbers_binary]]:
+#     for j in i[0]:
+#         is_new_prime = True
+#         for prime in prime_candidates:
+#             if does_prime_has_it(prime, j):
+#                 is_new_prime = False
+#                 break
+#         if is_new_prime:
+#             prime_candidates.append(j)
 
-primes = []
-for i in layers[::-1]+[[numbers_binary]]:
-    for j in i[0]:
-        # print('trying prime:', j)
-        is_new_prime = True
-        for prime in primes:
-            if does_prime_has_it(prime, j):
-                # print('failed')
-                is_new_prime = False
-                break
-        if is_new_prime:
-            # print('passed')
-            primes.append(j)
-
-print('primes:', ', '.join(primes).replace('\'', ''))
-# end of finding primes
+# print('primes:', ', '.join(primes).replace('\'', ''))
+# # end of finding primes
 
 
 # testing
-f_numbers = []
-for i in range(2**n):
-    i_bin = (n*'0'+bin(i)[2:])[-n:]
-    included = False
-    for prime in primes:
-        if does_prime_has_it(prime, i_bin):
-            included = True
-            break
+# f_numbers = []
+# for i in range(2**n):
+#     i_bin = (n*'0'+bin(i)[2:])[-n:]
+#     included = False
+#     for prime in primes:
+#         if does_prime_has_it(prime, i_bin):
+#             included = True
+#             break
 
-    if included:
-        f_numbers.append(i)
+#     if included:
+#         f_numbers.append(i)
 
-if not f_numbers==numbers:
-    print('BAZINGA... bug') # I tested thausands of numbers to make sure, it works...
-    print(numbers)
-    print(f_numbers)
-    exit(1)
+# if not f_numbers==numbers:
+#     print('BAZINGA... bug') # I tested thausands of numbers to make sure, it works...
+#     print(numbers)
+#     print(f_numbers)
+#     exit(1)
 # end of testing
 
 
@@ -134,7 +142,7 @@ for i in layers:
     printed_layers.append(i[0])
     printed_layers.append(i[2])
 
-header = ('N,bin,,'+''.join(['L'+str(i)+',,' for i in range(1, n+1)]))[:-1]
+header = ('N,'+''.join(['L'+str(i)+',,' for i in range(n+1)]))[:-1]
 assert len(header.split(','))==len(printed_layers)
 splitter = [' '*len(str(2**n-1)),]+[' '*n]*(len(printed_layers)-1)
 for i in range(len(printed_layers)):
@@ -145,3 +153,4 @@ for i in range(len(printed_layers)):
 
 print_table(printed_layers, n=n)
 # end of printing
+
